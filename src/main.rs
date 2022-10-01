@@ -10,8 +10,6 @@ mod models;
 mod schema;
 mod handlers;
 
-// type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
-
 use crate::handlers::collections;
 
 #[actix_web::main]
@@ -19,8 +17,8 @@ async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    // let hostname = std::env::var("HOSTNAME").expect("DATABASE_URL");
-    // let port = std::env::var("PORT").unwrap().parse::<i32>().expect("DATABASE_URL");
+    let hostname = std::env::var("HOSTNAME").expect("DATABASE_URL").as_str();
+    let port = std::env::var("PORT").unwrap().parse::<u16>().expect("DATABASE_URL");
 
     // set up database connection pool
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL");
@@ -38,9 +36,9 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .wrap(middleware::Logger::default())
             .service(collections::get_collections)
-            // .service(add_user)
+            .service(collections::get_collections_by_id)
     })
-        .bind(("127.0.0.1", 8080))?
+        .bind((hostname, port))?
         .run()
         .await
 }
