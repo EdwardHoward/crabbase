@@ -5,7 +5,6 @@ use actix_web::{middleware, web, App, HttpServer};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 
-mod actions;
 mod models;
 mod schema;
 mod handlers;
@@ -36,10 +35,7 @@ async fn main() -> std::io::Result<()> {
             // set up DB pool to be used with web::Data<Pool> extractor
             .app_data(web::Data::new(pool.clone()))
             .wrap(middleware::Logger::default())
-            .service(collections::get_collection)
-            .service(collections::get_collections)
-            .service(collections::insert_collection)
-            .service(collections::delete_collection)
+            .configure(collections::init_routes)
     })
         .bind((hostname, port))?
         .run()
