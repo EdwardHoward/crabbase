@@ -9,6 +9,7 @@ mod actions;
 mod models;
 mod schema;
 mod handlers;
+mod utils;
 
 use crate::handlers::collections;
 
@@ -17,8 +18,8 @@ async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    let hostname = std::env::var("HOSTNAME").expect("DATABASE_URL").as_str();
-    let port = std::env::var("PORT").unwrap().parse::<u16>().expect("DATABASE_URL");
+    let hostname = std::env::var("HOST").expect("HOST");
+    let port = std::env::var("PORT").expect("PORT").parse::<u16>().unwrap();
 
     // set up database connection pool
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL");
@@ -27,7 +28,7 @@ async fn main() -> std::io::Result<()> {
         .build(manager)
         .expect("Failed to create pool.");
 
-    log::info!("starting HTTP server at http://localhost:8080");
+    log::info!("starting HTTP server at http://{}:{}", hostname, port);
 
     // Start HTTP server
     HttpServer::new(move || {
@@ -36,7 +37,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .wrap(middleware::Logger::default())
             .service(collections::get_collections)
-            .service(collections::get_collections_by_id)
+            .service(collections::get_collection_by_id)
+            .service(collections::insert_collection)
     })
         .bind((hostname, port))?
         .run()

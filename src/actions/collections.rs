@@ -1,24 +1,46 @@
 use diesel::prelude::*;
 
-use crate::models::Collection;
+use crate::models::collection::{ Collection, NewCollection };
 use crate::schema::_collections::dsl::*;
+use crate::utils::generate_id;
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
 pub fn get_collections(conn: &mut SqliteConnection) -> Result<Vec<Collection>, DbError>{
   let collections = _collections
     .limit(10)
-    .load::<Collection>(conn)
-    .expect("Error loading collections");
+    .load::<Collection>(conn);
 
-  Ok(collections)
+  return match collections {
+    Ok(collections) => Ok(collections),
+    Err(error) => Err(Box::new(error))
+  }
 }
 
 pub fn get_collection_by_id(conn: &mut SqliteConnection, collection_id: &str) -> Result<Collection, DbError> {
-  let collection: Collection = _collections
+  let collection = _collections
     .filter(id.eq(collection_id))
-    .first(conn)
-    .expect("Error loading collection");
+    .first::<Collection>(conn);
 
-  Ok(collection)
+  return match collection {
+    Ok(collection) => Ok(collection),
+    Err(error) => Err(Box::new(error))
+  }
+}
+
+pub fn insert_collection(conn: &mut SqliteConnection, collection: NewCollection) -> Result<usize, DbError> {
+  let new_collection = Collection {
+    id: generate_id(15),
+    name: collection.name,
+    schema: collection.schema
+  };
+
+  let rows_inserted = diesel::insert_into(_collections)
+    .values(&new_collection)
+    .execute(conn);
+
+  return match rows_inserted {
+    Ok(response) => Ok(response),
+    Err(error) => Err(Box::new(error))
+  }
 }
