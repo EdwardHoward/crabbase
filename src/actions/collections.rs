@@ -1,8 +1,7 @@
 use diesel::prelude::*;
 
-use crate::models::collection::{ Collection, NewCollection };
+use crate::models::collection::{ Collection, CollectionMessage };
 use crate::schema::_collections::dsl::*;
-use crate::utils::generate_id;
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
@@ -28,12 +27,8 @@ pub fn get_collection(conn: &mut SqliteConnection, collection_id: &str) -> Resul
   }
 }
 
-pub fn insert_collection(conn: &mut SqliteConnection, collection: NewCollection) -> Result<usize, DbError> {
-  let new_collection = Collection {
-    id: generate_id(15),
-    name: collection.name,
-    schema: collection.schema
-  };
+pub fn insert_collection(conn: &mut SqliteConnection, collection: CollectionMessage) -> Result<usize, DbError> {
+  let new_collection = Collection::from(collection);
 
   let rows_inserted = diesel::insert_into(_collections)
     .values(&new_collection)
@@ -46,10 +41,6 @@ pub fn insert_collection(conn: &mut SqliteConnection, collection: NewCollection)
 }
 
 pub fn delete_collection(conn: &mut SqliteConnection, collection_id: &str) -> Result<usize, DbError> {
-  // let collection = _collections
-  //   .filter(id.eq(collection_id))
-  //   .first::<Collection>(conn);
-
   let rows_deleted = diesel::delete(
     _collections.filter(
       id.eq(collection_id)

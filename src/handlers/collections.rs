@@ -2,7 +2,7 @@ use actix_web::{delete, get, post, web, Error, HttpResponse};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use crate::actions::collections;
-use crate::models::collection::NewCollection;
+use crate::models::collection::CollectionMessage;
 
 type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
@@ -38,7 +38,7 @@ pub async fn get_collection(pool: web::Data<DbPool>, id: web::Path<String>) -> R
 }
 
 #[post("/api/collections")]
-pub async fn insert_collection(pool: web::Data<DbPool>, form: web::Form<NewCollection>) -> Result<HttpResponse, Error> {
+pub async fn insert_collection(pool: web::Data<DbPool>, form: web::Form<CollectionMessage>) -> Result<HttpResponse, Error> {
     let collection = form.into_inner();
 
     let response = web::block(move || {
