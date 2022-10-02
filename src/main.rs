@@ -37,8 +37,9 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .wrap(middleware::Logger::default())
             .service(collections::get_collections)
-            .service(collections::get_collection_by_id)
+            .service(collections::get_collection)
             .service(collections::insert_collection)
+            .service(collections::delete_collection)
     })
         .bind((hostname, port))?
         .run()
