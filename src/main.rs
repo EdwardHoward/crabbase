@@ -1,6 +1,7 @@
 extern crate diesel;
 
-use actix_web::{middleware, web, App, HttpServer};
+use actix_files::NamedFile;
+use actix_web::{middleware, web, App, HttpServer, Error};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 
@@ -10,6 +11,10 @@ mod handlers;
 mod utils;
 
 use crate::handlers::collections;
+
+async fn index() -> Result<NamedFile, Error> {
+    Ok(NamedFile::open("./static/index.html")?)
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -35,6 +40,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .wrap(middleware::Logger::default())
             .configure(collections::init_routes)
+            .default_service(web::route().to(index))
     })
         .bind((hostname, port))?
         .run()
