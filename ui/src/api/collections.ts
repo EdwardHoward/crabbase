@@ -20,3 +20,13 @@ export function updateCollection(id: string, collection) {
     body: JSON.stringify(collection)
   })
 }
+
+export function createCollection(collection) {
+  return fetch(`${baseUrl}`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(collection)
+  })
+}

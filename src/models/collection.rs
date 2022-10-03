@@ -44,7 +44,7 @@ impl Collection {
     }
   }
 
-  pub fn insert(conn: &mut SqliteConnection, collection: CollectionMessage) -> Result<usize, DbError> {
+  pub fn insert(conn: &mut SqliteConnection, collection: CollectionMessage) -> Result<Collection, DbError> {
     let new_collection = Collection::from(collection);
 
     let rows_inserted = diesel::insert_into(_collections::table)
@@ -52,7 +52,7 @@ impl Collection {
       .execute(conn);
   
     return match rows_inserted {
-      Ok(response) => Ok(response),
+      Ok(_response) => Ok(new_collection),
       Err(error) => Err(Box::new(error))
     }
   }

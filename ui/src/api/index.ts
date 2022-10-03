@@ -1,1 +1,1 @@
-export { getCollection, getCollections, updateCollection } from './collections'
+export { getCollection, getCollections, updateCollection, createCollection } from './collections'

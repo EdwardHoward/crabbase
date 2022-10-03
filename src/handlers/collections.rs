@@ -37,7 +37,7 @@ async fn find(pool: web::Data<DbPool>, id: web::Path<String>) -> Result<HttpResp
 }
 
 #[post("/api/collections")]
-async fn insert(pool: web::Data<DbPool>, form: web::Form<CollectionMessage>) -> Result<HttpResponse, Error> {
+async fn insert(pool: web::Data<DbPool>, form: web::Json<CollectionMessage>) -> Result<HttpResponse, Error> {
     let collection = form.into_inner();
 
     let response = web::block(move || {

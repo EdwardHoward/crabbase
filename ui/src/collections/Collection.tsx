@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { getCollection } from '../api'
 import EditCollection from './EditCollection'
 
@@ -14,7 +14,7 @@ export default function Collection() {
   return (
     <div>
       <h3>{data.name}</h3>
-      <EditCollection collection={data} />
+      <Link to={`/collections/${id}/edit`}>Edit</Link>
     </div>
   )
 }

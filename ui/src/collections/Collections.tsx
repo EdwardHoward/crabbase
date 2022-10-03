@@ -10,14 +10,21 @@ export default function Collections() {
   }
 
   return (
-    <ul>
-      {data && data.map((collection) => (
-        <li key={collection.id}>
-          <Link to={`/collections/${collection.id}`}>
-            {collection.name}
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <>
+      <div>
+        <ul>
+          {data && data.map((collection) => (
+            <li key={collection.id}>
+              <Link to={`/collections/${collection.id}`}>
+                {collection.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <Link to={`/collections/create`}>Create</Link>
+      </div>
+    </>
   )
 }

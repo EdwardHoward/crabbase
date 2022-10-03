@@ -1,16 +1,17 @@
-import { useMutation, useQueryClient } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useForm } from 'react-hook-form'
-import { updateCollection } from "../api"
+import { getCollection, updateCollection } from "../api"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
-export default function EditCollection({
-  collection
-}: {
-  collection: { id: string, name: string, schema: string }
-}) {
-  const queryClient = useQueryClient()
-  const mutation = useMutation(col => updateCollection(collection.id, col), {
+export default function EditCollection() {
+  const navigate = useNavigate()
+
+  const { id = '' } = useParams()
+  const { data, status } = useQuery(['collections', id], () => getCollection(id))
+
+  const mutation = useMutation(col => updateCollection(id, col), {
     onSuccess: () => {
-      queryClient.invalidateQueries(['collections', collection.id])
+      navigate(`/collections/${id}`)
     }
   })
 
@@ -18,22 +19,31 @@ export default function EditCollection({
 
   function onSubmit(formValues) {
     mutation.mutate({
-      ...collection,
+      ...data,
       ...formValues
     })
   }
 
+  if (status === 'loading') {
+    return null
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <>
       <div>
-        <label htmlFor='name'>Name: </label>
-        <input defaultValue={collection.name} {...register('name')} />
+        <Link to={`/collections/${id}`}>Back</Link>
       </div>
-      <div>
-        <label htmlFor='schema'>Schema: </label>
-        <textarea defaultValue={collection.schema} {...register('schema')}></textarea>
-      </div>
-      <button>Submit</button>
-    </form>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <label htmlFor='name'>Name: </label>
+          <input defaultValue={data.name} {...register('name')} />
+        </div>
+        <div>
+          <label htmlFor='schema'>Schema: </label>
+          <textarea defaultValue={data.schema} {...register('schema')}></textarea>
+        </div>
+        <button>Submit</button>
+      </form>
+    </>
   )
 }
