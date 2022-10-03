@@ -39,7 +39,7 @@ async fn main() -> std::io::Result<()> {
         .wrap(middleware::Logger::default())
         .wrap(Cors::default()
           .allowed_origin("http://localhost:5173")
-          .allowed_methods(vec!["GET", "POST", "DELETE"])
+          .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
           .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
           .allowed_header(header::CONTENT_TYPE)
           .max_age(3600)

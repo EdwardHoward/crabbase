@@ -6,6 +6,7 @@ import {
 import Collections from './collections/Collections'
 import Collection from './collections/Collection'
 import './App.css'
+import Layout from './Layout'
 
 const queryClient = new QueryClient()
 
@@ -15,8 +16,10 @@ function App() {
       <div className="App">
         <BrowserRouter basename="/_">
           <Routes>
-            <Route path="/collections/:id" element={<Collection />} />
-            <Route path="/collections" element={<Collections />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="/collections" element={<Collections />} />
+              <Route path="/collections/:id" element={<Collection />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </div>

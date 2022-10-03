@@ -1,10 +1,6 @@
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
-
-function getCollections() {
-  return fetch("http://localhost:8080/api/collections")
-    .then(res => res.json())
-}
+import { getCollections } from '../api'
 
 export default function Collections() {
   const { data, status } = useQuery('collections', getCollections)

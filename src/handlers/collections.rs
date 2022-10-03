@@ -52,7 +52,7 @@ async fn insert(pool: web::Data<DbPool>, form: web::Form<CollectionMessage>) -> 
 }
 
 #[put("/api/collections/{id}")]
-async fn update(pool: web::Data<DbPool>, id: web::Path<String>, form: web::Form<CollectionMessage>) -> Result<HttpResponse, Error> {
+async fn update(pool: web::Data<DbPool>, id: web::Path<String>, form: web::Json<CollectionMessage>) -> Result<HttpResponse, Error> {
     let collection = form.into_inner();
     let id = id.into_inner();
 

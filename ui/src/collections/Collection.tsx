@@ -1,10 +1,7 @@
 import { useQuery } from 'react-query'
 import { useParams } from 'react-router-dom'
-
-function getCollection(id: string) {
-  return fetch(`http://localhost:8080/api/collections/${id}`)
-    .then(res => res.json())
-}
+import { getCollection } from '../api'
+import EditCollection from './EditCollection'
 
 export default function Collection() {
   const { id = '' } = useParams()
@@ -16,7 +13,8 @@ export default function Collection() {
 
   return (
     <div>
-      {data.name}
+      <h3>{data.name}</h3>
+      <EditCollection collection={data} />
     </div>
   )
 }
