@@ -1,7 +1,6 @@
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-// use crate::schema::_collections::dsl::*;
 use crate::schema::*;
 use crate::utils::generate_id;
 
@@ -23,7 +22,7 @@ pub struct CollectionMessage {
 }
 
 impl Collection {
-  pub fn find_all(conn: &mut SqliteConnection) -> Result<Vec<Collection>, DbError> {
+  pub fn find_all(conn: &mut SqliteConnection) -> Result<Vec<Self>, DbError> {
     let collections = _collections::table
     .limit(10)
     .load::<Collection>(conn);
@@ -34,9 +33,9 @@ impl Collection {
     }
   }
 
-  pub fn find(conn: &mut SqliteConnection, collection_id: &str) -> Result<Collection, DbError> {
+  pub fn find(conn: &mut SqliteConnection, id: String) -> Result<Self, DbError> {
     let collection = _collections::table
-      .filter(_collections::id.eq(collection_id))
+      .filter(_collections::id.eq(id))
       .first::<Collection>(conn);
   
     return match collection {
@@ -58,10 +57,22 @@ impl Collection {
     }
   }
 
-  pub fn delete(conn: &mut SqliteConnection, collection_id: &str)  -> Result<usize, DbError> {
+  pub fn update(conn: &mut SqliteConnection, id: String, collection: CollectionMessage) -> Result<usize, DbError> {
+    let response = diesel::update(_collections::table)
+    .filter(_collections::id.eq(id))
+    .set(collection)
+    .execute(conn);
+
+    return match response {
+      Ok(response) => Ok(response),
+      Err(error) => Err(Box::new(error))
+    }
+  }
+
+  pub fn delete(conn: &mut SqliteConnection, id: String)  -> Result<usize, DbError> {
     let rows_deleted = diesel::delete(
       _collections::table.filter(
-        _collections::id.eq(collection_id)
+        _collections::id.eq(id)
       )
     ).execute(conn);
   

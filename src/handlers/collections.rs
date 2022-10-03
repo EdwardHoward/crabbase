@@ -1,4 +1,4 @@
-use actix_web::{delete, get, post, web, Error, HttpResponse};
+use actix_web::{delete, get, post, put, web, Error, HttpResponse};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use crate::models::collection::{Collection, CollectionMessage};
@@ -25,12 +25,10 @@ async fn find_all(pool: web::Data<DbPool>) -> Result<HttpResponse, Error> {
 
 #[get("/api/collections/{id}")]
 async fn find(pool: web::Data<DbPool>, id: web::Path<String>) -> Result<HttpResponse, Error> {
-    let id_str = id.into_inner();
-
     let collection = web::block(move || {
       let mut conn = pool.get()?;
 
-      Collection::find(&mut conn, &id_str)
+      Collection::find(&mut conn, id.into_inner())
     })
     .await?
     .map_err(actix_web::error::ErrorInternalServerError)?;
@@ -53,14 +51,28 @@ async fn insert(pool: web::Data<DbPool>, form: web::Form<CollectionMessage>) -> 
     Ok(HttpResponse::Ok().json(response))
 }
 
-#[delete("/api/collections/{id}")]
-async fn delete(pool: web::Data<DbPool>, id: web::Path<String>) -> Result<HttpResponse, Error> {
-    let id_str = id.into_inner();
+#[put("/api/collections/{id}")]
+async fn update(pool: web::Data<DbPool>, id: web::Path<String>, form: web::Form<CollectionMessage>) -> Result<HttpResponse, Error> {
+    let collection = form.into_inner();
+    let id = id.into_inner();
 
     let response = web::block(move || {
         let mut conn = pool.get()?;
 
-        Collection::delete(&mut conn, &id_str)
+        Collection::update(&mut conn, id, collection)
+    })
+    .await?
+    .map_err(actix_web::error::ErrorInternalServerError)?;
+
+    Ok(HttpResponse::Ok().json(response))
+}
+
+#[delete("/api/collections/{id}")]
+async fn delete(pool: web::Data<DbPool>, id: web::Path<String>) -> Result<HttpResponse, Error> {
+    let response = web::block(move || {
+        let mut conn = pool.get()?;
+
+        Collection::delete(&mut conn, id.into_inner())
     })
     .await?
     .map_err(actix_web::error::ErrorInternalServerError)?;
@@ -72,5 +84,6 @@ pub fn init_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(find);
     cfg.service(find_all);
     cfg.service(insert);
+    cfg.service(update);
     cfg.service(delete);
 }
