@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query'
 import { Link, useParams } from 'react-router-dom'
 import { getCollection } from '../api'
-import EditCollection from './EditCollection'
 
 export default function Collection() {
   const { id = '' } = useParams()
@@ -14,6 +13,7 @@ export default function Collection() {
   return (
     <div>
       <h3>{data.name}</h3>
+      <code>{data.schema}</code>
       <Link to={`/collections/${id}/edit`}>Edit</Link>
     </div>
   )

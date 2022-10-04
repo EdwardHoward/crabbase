@@ -11,7 +11,6 @@ export function getCollections() {
 }
 
 export function updateCollection(id: string, collection) {
-  console.log(id, collection)
   return fetch(`${baseUrl}/${id}`, {
     method: 'put',
     headers: {
