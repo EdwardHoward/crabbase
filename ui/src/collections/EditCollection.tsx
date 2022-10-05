@@ -1,7 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "react-query"
-import { useForm } from 'react-hook-form'
-import { getCollection, updateCollection } from "../api"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { useMutation, useQuery } from 'react-query'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { getCollection, updateCollection } from '../api'
+import CollectionForm from './CollectionForm'
+import { CollectionModel } from './CollectionModel'
 
 export default function EditCollection() {
   const navigate = useNavigate()
@@ -15,9 +16,7 @@ export default function EditCollection() {
     }
   })
 
-  const { register, handleSubmit } = useForm()
-
-  function onSubmit(formValues) {
+  function onSubmit(formValues: CollectionModel) {
     mutation.mutate({
       ...data,
       ...formValues
@@ -30,20 +29,12 @@ export default function EditCollection() {
 
   return (
     <>
-      <div>
-        <Link to={`/collections/${id}`}>Back</Link>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor='name'>Name: </label>
-          <input defaultValue={data.name} {...register('name')} />
-        </div>
-        <div>
-          <label htmlFor='schema'>Schema: </label>
-          <textarea defaultValue={data.schema} {...register('schema')}></textarea>
-        </div>
-        <button>Submit</button>
-      </form>
+      <div>{data.name}</div>
+      <Link to={`/collections/${id}`}>Back</Link>
+      <CollectionForm
+        collection={data}
+        onSubmit={onSubmit}
+      />
     </>
   )
 }
