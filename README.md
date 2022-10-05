@@ -26,13 +26,20 @@ PORT=8080
 
 `yarn build`
 
+# Run
 ### Start crabbase from root
 
 `cargo start`
 
-This might crash at first if you don't have the data.db file generated, but it should generate that file and start working if you run it a second time.
+> This might crash at first if you don't have the data.db file generated, but it should generate that file and start working if you run it a second time.
 
-## Development
+
+| page | url  |
+| ---- | ---- |
+| admin | `http://localhost:8080/_`|
+| api | `http://localhost:8080/api`|
+
+# Development
 ### Hot reloading
 
 `cargo watch -x "run" -w "./src"`
