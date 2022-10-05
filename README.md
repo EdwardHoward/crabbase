@@ -32,6 +32,8 @@ PORT=8080
 
 `cargo start`
 
+This might crash at first if you don't have the data.db file generated, but it should generate that file and start working if you run it a second time.
+
 ## Development
 ### Hot reloading
 
