@@ -16,8 +16,6 @@ PORT=8080
 
 `cargo install diesel_cli`
 
-`diesel setup`
-
 `diesel migration run`
 
 ### Install and build admin ui
